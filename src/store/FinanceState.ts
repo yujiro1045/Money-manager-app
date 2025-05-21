@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export type Transaction = {
   id: string;
-  type: "income" | "expoense";
+  type: "income" | "expense";
   category: string;
   amount: number;
   date: string;

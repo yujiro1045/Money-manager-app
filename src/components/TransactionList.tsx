@@ -1,0 +1,65 @@
+"use client";
+
+import { db } from "@/libs/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+
+interface Transaction {
+  id: string;
+  type: "income" | "expense";
+  amount: number;
+  category: string;
+  date: string;
+}
+
+const TransactionList = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "transactions"));
+        const data = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Transaction[];
+        setTransactions(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error obteniendo transacciones:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  if (loading)
+    return <p className="text-gray-600">Cargando transacciones...</p>;
+
+  return (
+    <div className="mt-4 space-y-2">
+      {transactions.map((tx) => (
+        <div
+          key={tx.id}
+          className="p-4 border rounded shadow flex justify-between items-center"
+        >
+          <div>
+            <p>{tx.category}</p>
+            <p>{new Date(tx.date).toLocaleDateString()}</p>
+          </div>
+          <p
+            className={`text-lg font-bold ${
+              tx.type === "income" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {tx.type === "income" ? "+" : "-"} ${tx.amount}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default TransactionList;
