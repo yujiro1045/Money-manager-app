@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCMoEGVDM0htvlgeFBWST5oCjUrDHfg4F8",
   authDomain: "money-manager-9d01c.firebaseapp.com",
   projectId: "money-manager-9d01c",
-  storageBucket: "money-manager-9d01c.firebasestorage.app",
+  storageBucket: "money-manager-9d01c.appspot.com",
   messagingSenderId: "36095706527",
   appId: "1:36095706527:web:0a9ca2bd29e096dd6ee9aa",
 };

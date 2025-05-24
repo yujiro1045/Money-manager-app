@@ -1,7 +1,7 @@
 "use client";
 
 import { db } from "@/libs/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
 interface Transaction {
@@ -17,29 +17,23 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "transactions"));
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Transaction[];
-        setTransactions(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error obteniendo transacciones:", error);
-        setLoading(false);
-      }
-    };
+    const unsub = onSnapshot(collection(db, "transactions"), (snapshop) => {
+      const data = snapshop.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Transaction[];
+      setTransactions(data);
+      setLoading(false);
+    });
 
-    fetchTransactions();
-  }, []);
+    return () => unsub();
+  });
 
   if (loading)
     return <p className="text-gray-600">Cargando transacciones...</p>;
 
   return (
-    <div className="mt-4 space-y-2">
+    <div className=" space-y-2 mb-20 mt-24">
       {transactions.map((tx) => (
         <div
           key={tx.id}
@@ -50,7 +44,7 @@ const TransactionList = () => {
             <p>{new Date(tx.date).toLocaleDateString()}</p>
           </div>
           <p
-            className={`text-lg font-bold ${
+            className={`text-lg font-bold  ${
               tx.type === "income" ? "text-green-600" : "text-red-600"
             }`}
           >

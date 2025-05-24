@@ -15,6 +15,12 @@ const TransactionForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const amountNumber = parseFloat(amount);
+    if (isNaN(amountNumber) || amountNumber <= 0) {
+      alert("Por favor ingrese un monto válido.");
+      return;
+    }
+
     const transaction = {
       id: uuidv4(),
       type,
@@ -24,16 +30,18 @@ const TransactionForm = () => {
     };
 
     try {
-      await addDoc(collection(db, "transactions"), transaction); // se guarda en Firestore
-      addTransaction(transaction); // se guarda en Zustand para actualizar la UI
+      await addDoc(collection(db, "transactions"), transaction);
+      addTransaction(transaction);
       setAmount("");
+      setCategory("General");
+      setType("income");
     } catch (err) {
       console.error("Error al guardar transacción:", err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow">
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow h-60">
       <div className="flex flex-col gap-2">
         <select
           value={type}
