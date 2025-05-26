@@ -4,6 +4,7 @@ import { loginUser } from "@/libs/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -14,9 +15,21 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await loginUser(email, password);
+      Swal.fire({
+        icon: "success",
+        title: "Inicio de sesión exitoso",
+        text: "Bienvenido de nuevo!",
+      });
       router.push("/");
     } catch (error: any) {
-      alert("Error al iniciar sesión: " + error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error al iniciar sesióm",
+        text:
+          error.code === "auth/user-not-foun"
+            ? "Contraseña incorrecta"
+            : "Hubo un problema al iniciar sesión, por favor verifica tus credenciales",
+      });
     }
   };
 

@@ -4,6 +4,7 @@ import { registerUser } from "@/libs/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -14,9 +15,21 @@ const RegisterPage = () => {
     e.preventDefault();
     try {
       await registerUser(email, password);
+      Swal.fire({
+        icon: "success",
+        title: "Registro exitoso",
+        text: "Bienvenido a la aplicación!",
+      });
       router.push("/");
     } catch (error: any) {
-      alert(error.message);
+      Swal.fire({
+        icon: "error",
+        title: "Error al registrarse",
+        text:
+          error.code === "auth/email-already-in-use"
+            ? "El correo ya está en uso"
+            : "Hubo un problema al registrarse, por favor verifica tus credenciales",
+      });
     }
   };
 

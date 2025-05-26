@@ -1,7 +1,7 @@
 "use client";
 
-import { db } from "@/libs/firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/libs/firebase";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
 interface Transaction {
@@ -17,8 +17,16 @@ const TransactionList = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "transactions"), (snapshop) => {
-      const data = snapshop.docs.map((doc) => ({
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    const q = query(
+      collection(db, "transactions"),
+      where("uid", "==", currentUser.uid)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Transaction[];
@@ -27,7 +35,7 @@ const TransactionList = () => {
     });
 
     return () => unsub();
-  });
+  }, []);
 
   if (loading)
     return <p className="text-gray-600">Cargando transacciones...</p>;

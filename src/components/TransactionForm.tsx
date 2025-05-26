@@ -1,9 +1,10 @@
 "use client";
 
-import { db } from "@/libs/firebase";
+import { auth, db } from "@/libs/firebase";
 import { useFinanceStore } from "@/store/FinanceState";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 
 const TransactionForm = () => {
@@ -21,8 +22,18 @@ const TransactionForm = () => {
       return;
     }
 
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Debes iniciar sesión para agregar una transacción.",
+      });
+    }
+
     const transaction = {
       id: uuidv4(),
+      uid: currentUser?.uid,
       type,
       amount: parseFloat(amount),
       category,
