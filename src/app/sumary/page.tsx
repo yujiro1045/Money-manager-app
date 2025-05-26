@@ -1,50 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/libs/firebase";
-import Link from "next/link";
+import { useFinanceStore } from "@/store/FinanceState";
 import Image from "next/image";
-
-type Transaction = {
-  id: string;
-  type: "income" | "expense";
-  amount: number;
-  category: string;
-  date: string;
-};
+import Link from "next/link";
 
 const SumaryPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "transactions"));
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Transaction[];
-        setTransactions(data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error cargando transacciones:", err);
-        setLoading(false);
-      }
-    };
-
-    fetchTransactions();
-  }, []);
-
-  const totalIncome = transactions
-    .filter((tx) => tx.type === "income")
-    .reduce((acc, tx) => acc + tx.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, tx) => acc + tx.amount, 0);
-
-  const balance = totalIncome - totalExpense;
+  /*Fijate como la lógica está centralizada en el store, evitando recalculos innecesarios, solo se actualiza cuando se realiza una acción como modificar una transacción*/
+  const [loading, balance, totalIncome, totalExpense] = useFinanceStore(
+    (state) => [
+      state.loading,
+      state.balance,
+      state.incomeTotal,
+      state.expenseTotal
+    ]
+  );
 
   if (loading) return <p className="text-gray-600">Cargando resumen...</p>;
   return (

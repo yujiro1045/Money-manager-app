@@ -1,5 +1,7 @@
 "use client";
 
+import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
+import { TransactionType } from "@/interfaces/transacions.interface";
 import { auth, db } from "@/libs/firebase";
 import { useFinanceStore } from "@/store/FinanceState";
 import { addDoc, collection } from "firebase/firestore";
@@ -8,12 +10,13 @@ import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 
 const TransactionForm = () => {
-  const addTransaction = useFinanceStore((state) => state.addTransaction);
+  const [addExpense, addIncome] = useFinanceStore((state) => [state.addExpense, state.addIncome]);
   const [category, setCategory] = useState("General");
-  const [type, setType] = useState<"income" | "expense">("income");
+  const [type, setType] = useState<TransactionTypeEnum>(TransactionTypeEnum.INCOME);
   const [amount, setAmount] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
+    
     e.preventDefault();
 
     const amountNumber = parseFloat(amount);
@@ -29,9 +32,11 @@ const TransactionForm = () => {
         title: "Error",
         text: "Debes iniciar sesión para agregar una transacción.",
       });
+
+      return
     }
 
-    const transaction = {
+    const transaction: TransactionType = {
       id: uuidv4(),
       uid: currentUser?.uid,
       type,
@@ -42,10 +47,15 @@ const TransactionForm = () => {
 
     try {
       await addDoc(collection(db, "transactions"), transaction);
-      addTransaction(transaction);
+      if(type === TransactionTypeEnum.INCOME) {
+        addIncome(transaction);
+      } else {
+        addExpense(transaction);
+      }
+
       setAmount("");
       setCategory("General");
-      setType("income");
+      setType(TransactionTypeEnum.INCOME);
     } catch (err) {
       console.error("Error al guardar transacción:", err);
     }
@@ -56,7 +66,7 @@ const TransactionForm = () => {
       <div className="flex flex-col gap-2">
         <select
           value={type}
-          onChange={(e) => setType(e.target.value as "income" | "expense")}
+          onChange={(e) => setType(e.target.value as TransactionTypeEnum)}
           className="border p-2 rounded text-gray-500"
         >
           <option value="income">Ingreso</option>
