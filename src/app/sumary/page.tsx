@@ -1,50 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/libs/firebase";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-type Transaction = {
-  id: string;
-  type: "income" | "expense";
-  amount: number;
-  category: string;
-  date: string;
-};
+import { useFinanceStore } from "@/store/FinanceState";
 
 const SumaryPage = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "transactions"));
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Transaction[];
-        setTransactions(data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error cargando transacciones:", err);
-        setLoading(false);
-      }
-    };
-
-    fetchTransactions();
-  }, []);
-
-  const totalIncome = transactions
-    .filter((tx) => tx.type === "income")
-    .reduce((acc, tx) => acc + tx.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === "expense")
-    .reduce((acc, tx) => acc + tx.amount, 0);
-
-  const balance = totalIncome - totalExpense;
+  const [balance, expenseTotal, incomeTotal, loading] = useFinanceStore(
+    (state) => [
+      state.balance,
+      state.expenseTotal,
+      state.incomeTotal,
+      state.loading,
+    ]
+  );
 
   if (loading) return <p className="text-gray-600">Cargando resumen...</p>;
   return (
@@ -59,7 +27,7 @@ const SumaryPage = () => {
             height={24}
           />
           <p className="text-green-600 font-medium">
-            Total ingresos: ${totalIncome}
+            Total ingresos: ${incomeTotal.toLocaleString("de-DE")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -70,7 +38,7 @@ const SumaryPage = () => {
             height={24}
           />
           <p className="text-red-600 font-medium">
-            Total gastos: ${totalExpense}
+            Total gastos: ${expenseTotal.toLocaleString("de-DE")}
           </p>
         </div>
 
@@ -82,7 +50,9 @@ const SumaryPage = () => {
             height={24}
           />
 
-          <p className="text-blue-600 font-bold text-xl">Balance: ${balance}</p>
+          <p className="text-blue-600 font-bold text-xl">
+            Balance: ${balance.toLocaleString("de-DE")}
+          </p>
         </div>
       </div>
 

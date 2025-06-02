@@ -1,10 +1,14 @@
 "use client";
 
 import { loginUser } from "@/libs/auth";
+import { FirebaseError } from "firebase/app";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { RoutesEnum } from "../enum/routes.enum";
+
+const USER_NOT_FOUND = "auth/user-not-found";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,16 +24,18 @@ const LoginPage = () => {
         title: "Inicio de sesión exitoso",
         text: "Bienvenido de nuevo!",
       });
-      router.push("/");
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al iniciar sesióm",
-        text:
-          error.code === "auth/user-not-foun"
-            ? "Contraseña incorrecta"
-            : "Hubo un problema al iniciar sesión, por favor verifica tus credenciales",
-      });
+      router.push(RoutesEnum.HOME);
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al iniciar sesióm",
+          text:
+            error.code === USER_NOT_FOUND
+              ? "Contraseña incorrecta"
+              : "Hubo un problema al iniciar sesión, por favor verifica tus credenciales",
+        });
+      }
     }
   };
 

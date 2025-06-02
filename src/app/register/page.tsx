@@ -5,6 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { RoutesEnum } from "../enum/routes.enum";
+import { FirebaseError } from "firebase/app";
+
+const EMAIL_CONFLICT_CODE = "auth/email-already-in-use";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -20,16 +24,18 @@ const RegisterPage = () => {
         title: "Registro exitoso",
         text: "Bienvenido a la aplicación!",
       });
-      router.push("/");
-    } catch (error: any) {
-      Swal.fire({
-        icon: "error",
-        title: "Error al registrarse",
-        text:
-          error.code === "auth/email-already-in-use"
-            ? "El correo ya está en uso"
-            : "Hubo un problema al registrarse, por favor verifica tus credenciales",
-      });
+      router.push(RoutesEnum.HOME);
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al registrarse",
+          text:
+            error.code === EMAIL_CONFLICT_CODE
+              ? "El correo ya está en uso"
+              : "Hubo un problema al registrarse, por favor verifica tus credenciales",
+        });
+      }
     }
   };
 
@@ -55,7 +61,10 @@ const RegisterPage = () => {
         <button type="submit" className="bg-blue-600 text-white p-2 w-150">
           Registrarse
         </button>
-        <Link href="/login" className="text-blue-600 underline text-center">
+        <Link
+          href={RoutesEnum.LOGIN}
+          className="text-blue-600 underline text-center"
+        >
           Ya tienes una cuenta? inicia sesión aquí
         </Link>
       </form>

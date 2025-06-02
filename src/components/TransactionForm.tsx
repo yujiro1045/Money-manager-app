@@ -1,16 +1,22 @@
 "use client";
 
+import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
+import { TransactionType } from "@/interfaces/transacions-interfaces";
 import { auth, db } from "@/libs/firebase";
 import { useFinanceStore } from "@/store/FinanceState";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import { v4 as uuidv4 } from "uuid";
 
 const TransactionForm = () => {
-  const addTransaction = useFinanceStore((state) => state.addTransaction);
+  const { addExpense, addIncome } = useFinanceStore((state) => ({
+    addExpense: state.addExpense,
+    addIncome: state.addIncome,
+  }));
   const [category, setCategory] = useState("General");
-  const [type, setType] = useState<"income" | "expense">("income");
+  const [type, setType] = useState<TransactionTypeEnum>(
+    TransactionTypeEnum.INCOME
+  );
   const [amount, setAmount] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,23 +35,36 @@ const TransactionForm = () => {
         title: "Error",
         text: "Debes iniciar sesión para agregar una transacción.",
       });
+      return;
     }
 
-    const transaction = {
-      id: uuidv4(),
-      uid: currentUser?.uid,
-      type,
-      amount: parseFloat(amount),
-      category,
-      date: new Date().toISOString(),
-    };
-
     try {
-      await addDoc(collection(db, "transactions"), transaction);
-      addTransaction(transaction);
+      const docRef = await addDoc(collection(db, "transactions"), {
+        amount: amountNumber,
+        category,
+        date: new Date().toISOString(),
+        type,
+        uid: currentUser.uid,
+      });
+
+      const transaction: TransactionType = {
+        id: docRef.id,
+        amount: amountNumber,
+        category,
+        date: new Date().toISOString(),
+        type,
+        uid: currentUser.uid,
+      };
+
+      if (type === TransactionTypeEnum.INCOME) {
+        addIncome(transaction);
+      } else {
+        addExpense(transaction);
+      }
+
       setAmount("");
       setCategory("General");
-      setType("income");
+      setType(TransactionTypeEnum.INCOME);
     } catch (err) {
       console.error("Error al guardar transacción:", err);
     }
@@ -56,7 +75,7 @@ const TransactionForm = () => {
       <div className="flex flex-col gap-2">
         <select
           value={type}
-          onChange={(e) => setType(e.target.value as "income" | "expense")}
+          onChange={(e) => setType(e.target.value as TransactionTypeEnum)}
           className="border p-2 rounded text-gray-500"
         >
           <option value="income">Ingreso</option>
