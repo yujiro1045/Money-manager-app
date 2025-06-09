@@ -49,8 +49,11 @@ export const useFinanceStore = create<FinanceState & FinanceActions>((set) => ({
     });
   },
 
-  addExpense: (expense) => {
+  addExpense: (expense: TransactionType) => {
     set((state) => {
+      const exists = state.expenses.some((t) => t.id === expense.id);
+      if (exists) return state;
+
       const newExpenses = [...state.expenses, expense];
       const newExpenseTotal = newExpenses.reduce(
         (total, t) => total + t.amount,
@@ -86,6 +89,9 @@ export const useFinanceStore = create<FinanceState & FinanceActions>((set) => ({
 
   addIncome: (income: TransactionType) =>
     set((state) => {
+      const exists = state.incomes.some((t) => t.id === income.id);
+      if (exists) return state;
+
       const newIncomes = [...state.incomes, income];
       const newIncomeTotal = newIncomes.reduce(
         (total, t) => total + t.amount,
@@ -101,7 +107,18 @@ export const useFinanceStore = create<FinanceState & FinanceActions>((set) => ({
     }),
 
   deleteIncome: (incomeId) =>
-    set((state) => ({
-      incomes: state.incomes.filter((t) => t.id !== incomeId),
-    })),
+    set((state) => {
+      const newIncomes = state.incomes.filter((t) => t.id !== incomeId);
+      const newIncomeTotal = newIncomes.reduce(
+        (total, t) => total + t.amount,
+        0
+      );
+      const newBalance = newIncomeTotal - state.expenseTotal;
+
+      return {
+        incomes: newIncomes,
+        incomeTotal: newIncomeTotal,
+        balance: newBalance,
+      };
+    }),
 }));

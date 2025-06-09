@@ -1,4 +1,4 @@
-export enum FirebaseColeectionEnum {
+export enum FirebaseCollectionEnum {
   USERS = "users",
   TRANSACTIONS = "transactions",
 }

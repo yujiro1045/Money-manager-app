@@ -1,6 +1,7 @@
-"use client";
-
-import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
+import {
+  TransactionCategoryEnum,
+  TransactionTypeEnum,
+} from "@/app/enum/transaction/transaction-type.enum";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
 import { auth, db } from "@/libs/firebase";
 import { useFinanceStore } from "@/store/FinanceState";
@@ -9,11 +10,8 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 
 const TransactionForm = () => {
-  const { addExpense, addIncome } = useFinanceStore((state) => ({
-    addExpense: state.addExpense,
-    addIncome: state.addIncome,
-  }));
-  const [category, setCategory] = useState("General");
+  const { addExpense, addIncome } = useFinanceStore();
+  const [category, setCategory] = useState(TransactionCategoryEnum.CATEGORY);
   const [type, setType] = useState<TransactionTypeEnum>(
     TransactionTypeEnum.INCOME
   );
@@ -63,7 +61,7 @@ const TransactionForm = () => {
       }
 
       setAmount("");
-      setCategory("General");
+      setCategory(TransactionCategoryEnum.CATEGORY);
       setType(TransactionTypeEnum.INCOME);
     } catch (err) {
       console.error("Error al guardar transacción:", err);
@@ -86,7 +84,9 @@ const TransactionForm = () => {
           value={category}
           placeholder="Categoria"
           className="border p-2 rounded text-gray-500"
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) =>
+            setCategory(e.target.value as TransactionCategoryEnum)
+          }
         />
 
         <input

@@ -1,36 +1,52 @@
 "use client";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/libs/firebase";
-import { FirebaseColeectionEnum } from "../enum/firebase/firebase-collections.enum";
+import { FirebaseCollectionEnum } from "../enum/firebase/firebase-collections.enum";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
 import { useAuth } from "../hooks/useAuth";
 import { useFinanceStore } from "@/store/FinanceState";
-import React, { createContext, useEffect } from "react";
+import React, {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+} from "react";
 
 const FirestoreContext = createContext<object | undefined>(undefined);
 
-const FirestoreProvider = ({ children }: { children: React.ReactNode }) => {
+const FirestoreProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useAuth();
 
-  const [loadTransactions] = useFinanceStore((state) => [
-    state.loadTransactions,
-  ]);
+  const rawLoadTransactions = useFinanceStore(
+    (state) => state.loadTransactions
+  );
+  const loadTransactions = useCallback(rawLoadTransactions, []);
 
   useEffect(() => {
-    const transactionsQuery = query(
-      collection(db, FirebaseColeectionEnum.TRANSACTIONS),
-      where("userId", "==", user?.uid)
-    );
+    if (!user?.uid) return;
 
-    const unsub = onSnapshot(transactionsQuery, (querySnapshot) => {
-      const data: TransactionType[] = querySnapshot.docs.map(
-        (doc) => doc.data() as TransactionType
+    const subscribeToTransactionsData = () => {
+      const transactionsQuery = query(
+        collection(db, FirebaseCollectionEnum.TRANSACTIONS),
+        where("userId", "==", user?.uid)
       );
 
-      loadTransactions(data);
-    });
+      const unsub = onSnapshot(transactionsQuery, (querySnapshot) => {
+        const data: TransactionType[] = querySnapshot.docs.map(
+          (doc) => doc.data() as TransactionType
+        );
 
-    return () => unsub();
+        loadTransactions(data);
+      });
+      return () => unsub();
+    };
+
+    const unsubscribe = subscribeToTransactionsData();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [loadTransactions, user?.uid]);
 
   return (

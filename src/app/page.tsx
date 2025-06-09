@@ -37,7 +37,7 @@ export default function Home() {
         <TransactionForm />
         <TransactionList />
         <div className="text-center">
-          <Link href="/sumary" className="text-blue-600 underline">
+          <Link href={RoutesEnum.SUMARY} className="text-blue-600 underline">
             Ver resumen financiero
           </Link>
         </div>

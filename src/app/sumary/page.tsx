@@ -5,14 +5,7 @@ import Image from "next/image";
 import { useFinanceStore } from "@/store/FinanceState";
 
 const SumaryPage = () => {
-  const [balance, expenseTotal, incomeTotal, loading] = useFinanceStore(
-    (state) => [
-      state.balance,
-      state.expenseTotal,
-      state.incomeTotal,
-      state.loading,
-    ]
-  );
+  const { balance, incomeTotal, expenseTotal, loading } = useFinanceStore();
 
   if (loading) return <p className="text-gray-600">Cargando resumen...</p>;
   return (
