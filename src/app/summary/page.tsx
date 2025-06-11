@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFinanceStore } from "@/store/FinanceState";
 
-const SumaryPage = () => {
+const SummaryPage = () => {
   const { balance, incomeTotal, expenseTotal, loading } = useFinanceStore();
 
   if (loading) return <p className="text-gray-600">Cargando resumen...</p>;
@@ -56,4 +56,4 @@ const SumaryPage = () => {
   );
 };
 
-export default SumaryPage;
+export default SummaryPage;
