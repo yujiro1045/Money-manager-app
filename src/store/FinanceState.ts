@@ -8,131 +8,177 @@ type FinanceActions = {
   deleteIncome: (id: string) => void;
   addExpense: (transaction: TransactionType) => void;
   deleteExpense: (id: string) => void;
+  setSelectedMonth: (month: number) => void;
+  setSelectedYear: (year: number) => void;
+  getMonthlySummary: (
+    month: number,
+    year: number
+  ) => {
+    balance: number;
+    expenses: TransactionType[];
+    expenseTotal: number;
+    incomes: TransactionType[];
+    incomeTotal: number;
+  };
+  getMonthlyTransactions: (month: number, year: number) => TransactionType[];
 };
 type FinanceState = {
-  loading: boolean;
-  incomes: TransactionType[];
-  expenses: TransactionType[];
-  incomeTotal: number;
-  expenseTotal: number;
   balance: number;
+  expenses: TransactionType[];
+  expenseTotal: number;
+  incomes: TransactionType[];
+  incomeTotal: number;
+  loading: boolean;
+  selectedMonth: number;
+  selectedYear: number;
 };
 
-export const useFinanceStore = create<FinanceState & FinanceActions>((set) => ({
-  loading: true,
-  expenses: [],
-  incomes: [],
-  balance: 0,
-  incomeTotal: 0,
-  expenseTotal: 0,
+export const useFinanceStore = create<FinanceState & FinanceActions>(
+  (set, get) => ({
+    balance: 0,
+    expenses: [],
+    expenseTotal: 0,
+    incomes: [],
+    incomeTotal: 0,
+    loading: true,
+    selectedMonth: new Date().getMonth(),
+    selectedYear: new Date().getFullYear(),
 
-  loadTransactions: (transactions) => {
-    const expenses = transactions.filter(
-      (transaction) => transaction.type === TransactionTypeEnum.EXPENSE
-    );
-    const incomes = transactions.filter(
-      (transaction) => transaction.type === TransactionTypeEnum.INCOME
-    );
-
-    const expenseTotal = expenses.reduce(
-      (total, transaction) => total + transaction.amount,
-      0
-    );
-    const incomeTotal = incomes.reduce(
-      (total, transaction) => total + transaction.amount,
-      0
-    );
-
-    const balance = incomeTotal - expenseTotal;
-
-    set({
-      loading: false,
-      expenses,
-      incomes,
-      expenseTotal,
-      incomeTotal,
-      balance,
-    });
-  },
-
-  addExpense: (expense: TransactionType) => {
-    set((state) => {
-      const exists = state.expenses.some(
-        (transaction) => transaction.id === expense.id
+    loadTransactions: (transactions) => {
+      const expenses = transactions.filter(
+        (t) => t.type === TransactionTypeEnum.EXPENSE
       );
-      if (exists) return state;
+      const incomes = transactions.filter(
+        (t) => t.type === TransactionTypeEnum.INCOME
+      );
 
-      const newExpenses = [...state.expenses, expense];
-      const newExpenseTotal = newExpenses.reduce(
-        (total, transaction) => total + transaction.amount,
+      const expenseTotal = expenses.reduce((sum, t) => sum + t.amount, 0);
+      const incomeTotal = incomes.reduce((sum, t) => sum + t.amount, 0);
+      const balance = incomeTotal - expenseTotal;
+
+      set({
+        balance,
+        expenses,
+        expenseTotal,
+        incomes,
+        incomeTotal,
+        loading: false,
+      });
+    },
+
+    addIncome: (income) =>
+      set((state) => {
+        const exists = state.incomes.some((t) => t.id === income.id);
+        if (exists) return state;
+
+        const newIncomes = [...state.incomes, income];
+        const newIncomeTotal = newIncomes.reduce((sum, t) => sum + t.amount, 0);
+        const newBalance = newIncomeTotal - state.expenseTotal;
+
+        return {
+          balance: newBalance,
+          incomes: newIncomes,
+          incomeTotal: newIncomeTotal,
+        };
+      }),
+
+    deleteIncome: (id) =>
+      set((state) => {
+        const newIncomes = state.incomes.filter((t) => t.id !== id);
+        const newIncomeTotal = newIncomes.reduce((sum, t) => sum + t.amount, 0);
+        const newBalance = newIncomeTotal - state.expenseTotal;
+
+        return {
+          balance: newBalance,
+          incomes: newIncomes,
+          incomeTotal: newIncomeTotal,
+        };
+      }),
+
+    addExpense: (expense) =>
+      set((state) => {
+        const exists = state.expenses.some((t) => t.id === expense.id);
+        if (exists) return state;
+
+        const newExpenses = [...state.expenses, expense];
+        const newExpenseTotal = newExpenses.reduce(
+          (sum, t) => sum + t.amount,
+          0
+        );
+        const newBalance = state.incomeTotal - newExpenseTotal;
+
+        return {
+          balance: newBalance,
+          expenses: newExpenses,
+          expenseTotal: newExpenseTotal,
+        };
+      }),
+
+    deleteExpense: (id) =>
+      set((state) => {
+        const newExpenses = state.expenses.filter((t) => t.id !== id);
+        const newExpenseTotal = newExpenses.reduce(
+          (sum, t) => sum + t.amount,
+          0
+        );
+        const newBalance = state.incomeTotal - newExpenseTotal;
+
+        return {
+          balance: newBalance,
+          expenses: newExpenses,
+          expenseTotal: newExpenseTotal,
+        };
+      }),
+
+    setSelectedMonth: (month) => {
+      set({ selectedMonth: month });
+    },
+
+    setSelectedYear: (year) => {
+      set({ selectedYear: year });
+    },
+
+    getMonthlySummary: (month, year) => {
+      const { incomes, expenses } = get();
+
+      const filterByDate = (transactions: TransactionType[]) =>
+        transactions.filter((transaction) => {
+          const date = new Date(transaction.date);
+          return date.getMonth() === month && date.getFullYear() === year;
+        });
+
+      const filteredIncomes = filterByDate(incomes);
+      const filteredExpenses = filterByDate(expenses);
+
+      const incomeTotal = filteredIncomes.reduce((sum, t) => sum + t.amount, 0);
+      const expenseTotal = filteredExpenses.reduce(
+        (sum, t) => sum + t.amount,
         0
       );
-
-      const newBalance = state.incomeTotal - newExpenseTotal;
-
-      return {
-        expenses: newExpenses,
-        expenseTotal: newExpenseTotal,
-        balance: newBalance,
-      };
-    });
-  },
-
-  deleteExpense: (expenseId) => {
-    set((state) => {
-      const newExpenses = state.expenses.filter(
-        (transaction) => transaction.id !== expenseId
-      );
-      const newExpenseTotal = newExpenses.reduce(
-        (total, transaction) => total + transaction.amount,
-        0
-      );
-      const newBalance = state.incomeTotal - newExpenseTotal;
+      const balance = incomeTotal - expenseTotal;
 
       return {
-        expenses: newExpenses,
-        expenseTotal: newExpenseTotal,
-        balance: newBalance,
+        incomes: filteredIncomes,
+        expenses: filteredExpenses,
+        incomeTotal,
+        expenseTotal,
+        balance,
       };
-    });
-  },
+    },
 
-  addIncome: (income: TransactionType) =>
-    set((state) => {
-      const exists = state.incomes.some(
-        (transaction) => transaction.id === income.id
-      );
-      if (exists) return state;
+    getMonthlyTransactions: (month, year) => {
+      const { incomes, expenses } = get();
 
-      const newIncomes = [...state.incomes, income];
-      const newIncomeTotal = newIncomes.reduce(
-        (total, transaction) => total + transaction.amount,
-        0
-      );
-      const newBalance = newIncomeTotal - state.expenseTotal;
+      const filterByDate = (transactions: TransactionType[]) =>
+        transactions.filter((transaction) => {
+          const date = new Date(transaction.date);
+          return date.getMonth() === month && date.getFullYear() === year;
+        });
 
-      return {
-        incomes: newIncomes,
-        incomeTotal: newIncomeTotal,
-        balance: newBalance,
-      };
-    }),
+      const filteredIncomes = filterByDate(incomes);
+      const filteredExpenses = filterByDate(expenses);
 
-  deleteIncome: (incomeId) =>
-    set((state) => {
-      const newIncomes = state.incomes.filter(
-        (transaction) => transaction.id !== incomeId
-      );
-      const newIncomeTotal = newIncomes.reduce(
-        (total, transaction) => total + transaction.amount,
-        0
-      );
-      const newBalance = newIncomeTotal - state.expenseTotal;
-
-      return {
-        incomes: newIncomes,
-        incomeTotal: newIncomeTotal,
-        balance: newBalance,
-      };
-    }),
-}));
+      return [...filteredIncomes, ...filteredExpenses];
+    },
+  })
+);

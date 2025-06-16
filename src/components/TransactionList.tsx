@@ -2,18 +2,23 @@
 
 import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
 import { useTransactions } from "@/app/hooks/useTransactions";
+import { useFinanceStore } from "@/store/FinanceState";
 
 import React from "react";
 
 const TransactionList = () => {
-  const { loading, allTransactions, handleDeleteTransaction } =
-    useTransactions();
+  const { loading, handleDeleteTransaction } = useTransactions();
+
+  const { selectedMonth, selectedYear, getMonthlyTransactions } =
+    useFinanceStore();
+
+  const transactions = getMonthlyTransactions(selectedMonth, selectedYear);
 
   if (loading) {
     return <p className="text-gray-600">Cargando transacciones...</p>;
   }
 
-  if (allTransactions.length === 0) {
+  if (transactions.length === 0) {
     return (
       <p className="text-grat-600 mt-24 text-center">
         No hay transacciones aún. Añade una transacción para comenzar.
@@ -22,31 +27,35 @@ const TransactionList = () => {
   }
 
   return (
-    <div className=" space-y-2 mb-20 mt-24">
-      {allTransactions.map((tx) => (
+    <div className="space-y-4 mt-10 max-w-3xl mx-auto">
+      {transactions.map((tx) => (
         <div
           key={tx.id}
-          className="p-4 border rounded shadow flex justify-between items-center"
+          className="bg-white p-5 gap-2 rounded-xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow duration-200 flex justify-between items-center"
         >
           <div>
-            <p>{tx.category}</p>
-            <p>{new Date(tx.date).toLocaleDateString()}</p>
+            <p className="font-semibold text-slate-700">{tx.category}</p>
+            <p className="text-slate-500 text-sm">
+              {new Date(tx.date).toLocaleDateString()}
+            </p>
           </div>
+
           <p
-            className={`text-lg font-bold  ${
+            className={`text-lg font-bold ${
               tx.type === TransactionTypeEnum.INCOME
-                ? "text-green-600"
-                : "text-red-600"
+                ? "text-emerald-600"
+                : "text-rose-600"
             }`}
           >
             {tx.type === TransactionTypeEnum.INCOME ? "+" : "-"} $
             {tx.amount.toLocaleString("de-DE")}
           </p>
+
           <button
-            className="text-red-500 hover:text-red-700 border-amber-100 border rounded px-2 py-1 mx-2"
+            className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-all duration-200 border border-rose-300 hover:border-rose-400 rounded-lg px-3 py-2 text-sm font-medium"
             onClick={() => handleDeleteTransaction(tx)}
           >
-            Borrar transacción
+            Borrar
           </button>
         </div>
       ))}

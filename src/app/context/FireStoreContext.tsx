@@ -21,7 +21,9 @@ const FirestoreProvider: FC<PropsWithChildren> = ({ children }) => {
   const rawLoadTransactions = useFinanceStore(
     (state) => state.loadTransactions
   );
-  const loadTransactions = useCallback(rawLoadTransactions, []);
+  const loadTransactions = useCallback(rawLoadTransactions, [
+    rawLoadTransactions,
+  ]);
 
   useEffect(() => {
     if (!user?.uid) return;

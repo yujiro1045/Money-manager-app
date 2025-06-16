@@ -18,17 +18,19 @@ import Swal from "sweetalert2";
 export const useTransactions = () => {
   const { user, loading: authLoading } = useAuth();
   const {
-    incomes,
-    expenses,
     loadTransactions,
     deleteExpense,
     deleteIncome,
     loading,
+    selectedMonth,
+    selectedYear,
+    getMonthlyTransactions,
   } = useFinanceStore();
 
-  const allTransactions = [...incomes, ...expenses].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const allTransactions = getMonthlyTransactions(
+    selectedMonth,
+    selectedYear
+  ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const handleDeleteTransaction = async (tx: TransactionType) => {
     try {

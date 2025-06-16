@@ -17,12 +17,19 @@ const TransactionForm = () => {
   } = useTransactionForm();
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow h-60">
-      <div className="flex flex-col gap-2">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gradient-to-br from-slate-50 to-blue-50 p-6 rounded-2xl shadow-lg border border-slate-200 w-full max-w-md mx-auto"
+    >
+      <h2 className="text-2xl font-bold text-slate-700 mb-6 text-center">
+        Agregar Transacción
+      </h2>
+
+      <div className="flex flex-col gap-4">
         <select
           value={type}
           onChange={(e) => setType(e.target.value as TransactionTypeEnum)}
-          className="border p-2 rounded text-gray-500"
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
         >
           {Object.values(TransactionTypeEnum).map((value) => (
             <option key={value} value={value}>
@@ -30,11 +37,12 @@ const TransactionForm = () => {
             </option>
           ))}
         </select>
+
         <input
           type="text"
           value={category}
-          placeholder="Categoria"
-          className="border p-2 rounded text-gray-500"
+          placeholder="Categoría"
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 placeholder:text-slate-400 shadow-sm"
           onChange={(e) =>
             setCategory(e.target.value as TransactionCategoryEnum)
           }
@@ -44,13 +52,13 @@ const TransactionForm = () => {
           type="number"
           value={amount}
           placeholder="Monto"
-          className="border p-2 rounded text-gray-500"
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 placeholder:text-slate-400 shadow-sm"
           onChange={(e) => setAmount(e.target.value)}
         />
 
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 text-white py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
         >
           Agregar transacción
         </button>

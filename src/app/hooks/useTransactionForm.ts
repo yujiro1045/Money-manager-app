@@ -13,7 +13,10 @@ const DEFAULT_CATEGORY = TransactionCategoryEnum.CATEGORY;
 const DEFAULT_TYPE = TransactionTypeEnum.INCOME;
 
 export const useTransactionForm = () => {
-  const { addExpense, addIncome } = useFinanceStore();
+  const addExpense = useFinanceStore((state) => state.addExpense);
+  const addIncome = useFinanceStore((state) => state.addIncome);
+  const { selectedMonth, selectedYear } = useFinanceStore();
+
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [type, setType] = useState<TransactionTypeEnum>(DEFAULT_TYPE);
   const [amount, setAmount] = useState("");
@@ -57,7 +60,11 @@ export const useTransactionForm = () => {
     const transaction: Omit<TransactionType, "id"> = {
       amount: amountNumber,
       category,
-      date: new Date().toISOString(),
+      date: new Date(
+        selectedYear,
+        selectedMonth,
+        new Date().getDate()
+      ).toDateString(),
       type,
       uid: currentUser.uid,
     };
