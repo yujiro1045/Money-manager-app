@@ -1,4 +1,5 @@
 import { useFinanceStore } from "@/store/FinanceState";
+import dayjs from "dayjs";
 import React from "react";
 
 const Selector = () => {
@@ -13,7 +14,7 @@ const Selector = () => {
       >
         {Array.from({ length: 12 }, (_, i) => (
           <option key={i} value={i}>
-            {new Date(0, i).toLocaleString("es-ES", { month: "long" })}
+            {dayjs().month(i).locale("es").format("MMMM")}
           </option>
         ))}
       </select>

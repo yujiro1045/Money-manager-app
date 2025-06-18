@@ -3,6 +3,7 @@
 import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
 import { useTransactions } from "@/app/hooks/useTransactions";
 import { useFinanceStore } from "@/store/FinanceState";
+import dayjs from "dayjs";
 
 import React from "react";
 
@@ -36,7 +37,7 @@ const TransactionList = () => {
           <div>
             <p className="font-semibold text-slate-700">{tx.category}</p>
             <p className="text-slate-500 text-sm">
-              {new Date(tx.date).toLocaleDateString()}
+              {dayjs(tx.date).format("DD/MM/YYYY")}
             </p>
           </div>
 

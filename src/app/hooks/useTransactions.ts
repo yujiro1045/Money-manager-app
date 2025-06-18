@@ -4,6 +4,7 @@ import { useAuth } from "@/app/hooks/useAuth";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
 import { db } from "@/libs/firebase";
 import { useFinanceStore } from "@/store/FinanceState";
+import dayjs from "dayjs";
 import {
   collection,
   deleteDoc,
@@ -30,7 +31,7 @@ export const useTransactions = () => {
   const allTransactions = getMonthlyTransactions(
     selectedMonth,
     selectedYear
-  ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ).sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf());
 
   const handleDeleteTransaction = async (tx: TransactionType) => {
     try {

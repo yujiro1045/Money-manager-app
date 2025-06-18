@@ -5,25 +5,14 @@ import { FirebaseCollectionEnum } from "../enum/firebase/firebase-collections.en
 import { TransactionType } from "@/interfaces/transacions-interfaces";
 import { useAuth } from "../hooks/useAuth";
 import { useFinanceStore } from "@/store/FinanceState";
-import React, {
-  createContext,
-  FC,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { createContext, FC, PropsWithChildren, useEffect } from "react";
 
 const FirestoreContext = createContext<object | undefined>(undefined);
 
 const FirestoreProvider: FC<PropsWithChildren> = ({ children }) => {
   const { user } = useAuth();
 
-  const rawLoadTransactions = useFinanceStore(
-    (state) => state.loadTransactions
-  );
-  const loadTransactions = useCallback(rawLoadTransactions, [
-    rawLoadTransactions,
-  ]);
+  const loadTransactions = useFinanceStore((state) => state.loadTransactions);
 
   useEffect(() => {
     if (!user?.uid) return;

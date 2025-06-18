@@ -8,6 +8,7 @@ import {
   TransactionTypeEnum,
 } from "@/app/enum/transaction/transaction-type.enum";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
+import dayjs from "dayjs";
 
 const DEFAULT_CATEGORY = TransactionCategoryEnum.CATEGORY;
 const DEFAULT_TYPE = TransactionTypeEnum.INCOME;
@@ -15,7 +16,8 @@ const DEFAULT_TYPE = TransactionTypeEnum.INCOME;
 export const useTransactionForm = () => {
   const addExpense = useFinanceStore((state) => state.addExpense);
   const addIncome = useFinanceStore((state) => state.addIncome);
-  const { selectedMonth, selectedYear } = useFinanceStore();
+  const selectedMonth = useFinanceStore((state) => state.selectedMonth);
+  const selectedYear = useFinanceStore((state) => state.selectedYear);
 
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [type, setType] = useState<TransactionTypeEnum>(DEFAULT_TYPE);
@@ -60,11 +62,10 @@ export const useTransactionForm = () => {
     const transaction: Omit<TransactionType, "id"> = {
       amount: amountNumber,
       category,
-      date: new Date(
-        selectedYear,
-        selectedMonth,
-        new Date().getDate()
-      ).toDateString(),
+      date: dayjs()
+        .set("year", selectedYear)
+        .set("month", selectedMonth)
+        .format(),
       type,
       uid: currentUser.uid,
     };

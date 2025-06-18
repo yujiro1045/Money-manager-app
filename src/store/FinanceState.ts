@@ -1,5 +1,6 @@
 import { TransactionTypeEnum } from "@/app/enum/transaction/transaction-type.enum";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
+import dayjs from "dayjs";
 import { create } from "zustand";
 
 type FinanceActions = {
@@ -41,8 +42,8 @@ export const useFinanceStore = create<FinanceState & FinanceActions>(
     incomes: [],
     incomeTotal: 0,
     loading: true,
-    selectedMonth: new Date().getMonth(),
-    selectedYear: new Date().getFullYear(),
+    selectedMonth: dayjs().month(),
+    selectedYear: dayjs().year(),
 
     loadTransactions: (transactions) => {
       const expenses = transactions.filter(
@@ -143,8 +144,8 @@ export const useFinanceStore = create<FinanceState & FinanceActions>(
 
       const filterByDate = (transactions: TransactionType[]) =>
         transactions.filter((transaction) => {
-          const date = new Date(transaction.date);
-          return date.getMonth() === month && date.getFullYear() === year;
+          const date = dayjs(transaction.date);
+          return date.month() === month && date.year() === year;
         });
 
       const filteredIncomes = filterByDate(incomes);
@@ -171,8 +172,8 @@ export const useFinanceStore = create<FinanceState & FinanceActions>(
 
       const filterByDate = (transactions: TransactionType[]) =>
         transactions.filter((transaction) => {
-          const date = new Date(transaction.date);
-          return date.getMonth() === month && date.getFullYear() === year;
+          const date = dayjs(transaction.date);
+          return date.month() === month && date.year() === year;
         });
 
       const filteredIncomes = filterByDate(incomes);
