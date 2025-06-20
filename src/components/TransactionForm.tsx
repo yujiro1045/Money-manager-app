@@ -1,86 +1,64 @@
-"use client";
-
-import { auth, db } from "@/libs/firebase";
-import { useFinanceStore } from "@/store/FinanceState";
-import { addDoc, collection } from "firebase/firestore";
-import React, { useState } from "react";
-import Swal from "sweetalert2";
-import { v4 as uuidv4 } from "uuid";
+import {
+  TransactionCategoryEnum,
+  TransactionTypeEnum,
+} from "@/app/enum/transaction/transaction-type.enum";
+import { useTransactionForm } from "@/app/hooks/useTransactionForm";
+import React from "react";
 
 const TransactionForm = () => {
-  const addTransaction = useFinanceStore((state) => state.addTransaction);
-  const [category, setCategory] = useState("General");
-  const [type, setType] = useState<"income" | "expense">("income");
-  const [amount, setAmount] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const amountNumber = parseFloat(amount);
-    if (isNaN(amountNumber) || amountNumber <= 0) {
-      alert("Por favor ingrese un monto válido.");
-      return;
-    }
-
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Debes iniciar sesión para agregar una transacción.",
-      });
-    }
-
-    const transaction = {
-      id: uuidv4(),
-      uid: currentUser?.uid,
-      type,
-      amount: parseFloat(amount),
-      category,
-      date: new Date().toISOString(),
-    };
-
-    try {
-      await addDoc(collection(db, "transactions"), transaction);
-      addTransaction(transaction);
-      setAmount("");
-      setCategory("General");
-      setType("income");
-    } catch (err) {
-      console.error("Error al guardar transacción:", err);
-    }
-  };
+  const {
+    amount,
+    category,
+    handleSubmit,
+    setAmount,
+    setCategory,
+    setType,
+    type,
+  } = useTransactionForm();
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow h-60">
-      <div className="flex flex-col gap-2">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gradient-to-br from-slate-50 to-blue-50 p-6 rounded-2xl shadow-lg border border-slate-200 w-full max-w-md mx-auto"
+    >
+      <h2 className="text-2xl font-bold text-slate-700 mb-6 text-center">
+        Agregar Transacción
+      </h2>
+
+      <div className="flex flex-col gap-4">
         <select
           value={type}
-          onChange={(e) => setType(e.target.value as "income" | "expense")}
-          className="border p-2 rounded text-gray-500"
+          onChange={(e) => setType(e.target.value as TransactionTypeEnum)}
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
         >
-          <option value="income">Ingreso</option>
-          <option value="expense">Gasto</option>
+          {Object.values(TransactionTypeEnum).map((value) => (
+            <option key={value} value={value}>
+              {value === TransactionTypeEnum.INCOME ? "Ingreso" : "Gasto"}
+            </option>
+          ))}
         </select>
+
         <input
           type="text"
           value={category}
-          placeholder="Categoria"
-          className="border p-2 rounded text-gray-500"
-          onChange={(e) => setCategory(e.target.value)}
+          placeholder="Categoría"
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 placeholder:text-slate-400 shadow-sm"
+          onChange={(e) =>
+            setCategory(e.target.value as TransactionCategoryEnum)
+          }
         />
 
         <input
           type="number"
           value={amount}
           placeholder="Monto"
-          className="border p-2 rounded text-gray-500"
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 placeholder:text-slate-400 shadow-sm"
           onChange={(e) => setAmount(e.target.value)}
         />
 
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-200 text-white py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
         >
           Agregar transacción
         </button>
