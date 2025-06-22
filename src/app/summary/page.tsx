@@ -21,10 +21,12 @@ const SummaryPage = () => {
           <p className="text-slate-600">Análisis completo de tus finanzas</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 space-y-6">
-          <div className="flex items-center justify-between p-6 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-emerald-500 rounded-full shadow-md">
+        {/* Tarjetas principales */}
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 space-y-6">
+          {/* Ingresos */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100 border border-emerald-200">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="p-3 bg-emerald-500 rounded-full shadow-md shrink-0">
                 <Image
                   src="/icons/income2.svg"
                   alt="Ingresos"
@@ -42,7 +44,7 @@ const SummaryPage = () => {
                 </p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-500 text-white text-sm font-medium">
                 <svg
                   className="w-4 h-4 mr-1"
@@ -60,9 +62,10 @@ const SummaryPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-6 rounded-xl bg-gradient-to-r from-rose-50 to-rose-100 border border-rose-200">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-rose-500 rounded-full shadow-md">
+          {/* Gastos */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-rose-50 to-rose-100 border border-rose-200">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="p-3 bg-rose-500 rounded-full shadow-md shrink-0">
                 <Image
                   src="/icons/expense.svg"
                   alt="Gastos"
@@ -80,7 +83,7 @@ const SummaryPage = () => {
                 </p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <div className="inline-flex items-center px-3 py-1 rounded-full bg-rose-500 text-white text-sm font-medium">
                 <svg
                   className="w-4 h-4 mr-1"
@@ -98,84 +101,84 @@ const SummaryPage = () => {
             </div>
           </div>
 
-          <div className="border-t border-slate-200 pt-6">
-            <div
-              className={`flex items-center justify-between p-6 rounded-xl border-2 ${
-                balance >= 0
-                  ? "bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200"
-                  : "bg-gradient-to-r from-rose-50 to-rose-100 border-rose-200"
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`p-3 rounded-full shadow-md ${
-                    balance >= 0 ? "bg-blue-500" : "bg-rose-500"
-                  }`}
-                >
-                  <Image
-                    src="/icons/balance.svg"
-                    alt="Balance"
-                    width={28}
-                    height={28}
-                    className="filter brightness-0 invert"
-                  />
-                </div>
-                <div>
-                  <p className="text-slate-600 text-sm font-medium">
-                    Balance Total
-                  </p>
-                  <p
-                    className={`text-3xl font-bold ${
-                      balance >= 0 ? "text-blue-600" : "text-rose-600"
-                    }`}
-                  >
-                    ${balance.toLocaleString("de-DE")}
-                  </p>
-                </div>
+          {/* Balance */}
+          <div
+            className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border-2 ${
+              balance >= 0
+                ? "bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200"
+                : "bg-gradient-to-r from-rose-50 to-rose-100 border-rose-200"
+            }`}
+          >
+            <div className="flex items-center gap-4 flex-1">
+              <div
+                className={`p-3 rounded-full shadow-md shrink-0 ${
+                  balance >= 0 ? "bg-blue-500" : "bg-rose-500"
+                }`}
+              >
+                <Image
+                  src="/icons/balance.svg"
+                  alt="Balance"
+                  width={28}
+                  height={28}
+                  className="filter brightness-0 invert"
+                />
               </div>
-              <div className="text-right">
-                <div
-                  className={`inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium ${
-                    balance >= 0 ? "bg-blue-500" : "bg-rose-500"
+              <div>
+                <p className="text-slate-600 text-sm font-medium">
+                  Balance Total
+                </p>
+                <p
+                  className={`text-3xl font-bold ${
+                    balance >= 0 ? "text-blue-600" : "text-rose-600"
                   }`}
                 >
-                  {balance >= 0 ? (
-                    <>
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Positivo
-                    </>
-                  ) : (
-                    <>
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      Negativo
-                    </>
-                  )}
-                </div>
+                  ${balance.toLocaleString("de-DE")}
+                </p>
+              </div>
+            </div>
+            <div className="text-left sm:text-right">
+              <div
+                className={`inline-flex items-center px-4 py-2 rounded-full text-white text-sm font-medium ${
+                  balance >= 0 ? "bg-blue-500" : "bg-rose-500"
+                }`}
+              >
+                {balance >= 0 ? (
+                  <>
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Positivo
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Negativo
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
 
+        {/* Análisis y Recomendación */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6">
             <h3 className="text-lg font-semibold text-slate-700 mb-4">
@@ -215,6 +218,7 @@ const SummaryPage = () => {
           </div>
         </div>
 
+        {/* Botón Volver */}
         <div className="text-center">
           <Link
             href="/"

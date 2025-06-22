@@ -55,55 +55,65 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
-      <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl bg-white border border-slate-200">
-        <div className="w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 text-white p-10 flex flex-col justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent"></div>
-          <div className="relative z-10">
-            <div className="mb-6">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-4">
-                <svg
-                  className="w-8 h-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-3xl font-bold mb-4">Bienvenido de nuevo</h2>
-              <p className="text-lg mb-4 text-blue-100">
-                Ingresa y mantén tus finanzas bajo control.
-              </p>
-              <p className="text-sm text-blue-200">
-                Con Money Manager podrás visualizar tus ingresos y gastos de
-                forma sencilla y efectiva.
-              </p>
+      <div className="w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white flex flex-col md:flex-row">
+        {/* Panel ilustrativo (arriba en mobile, izquierda en desktop) */}
+        <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 text-white p-6 sm:p-10 flex flex-col justify-center relative order-last md:order-first">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent" />
+          <div className="relative z-10 text-center md:text-left space-y-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto md:mx-0">
+              <svg
+                aria-label="Logo Money Manager"
+                className="w-7 h-7 sm:w-8 sm:h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                />
+              </svg>
             </div>
+            <h2 className="text-2xl sm:text-3xl font-bold">
+              Bienvenido de nuevo
+            </h2>
+            <p className="text-base sm:text-lg text-blue-100">
+              Ingresa y mantén tus finanzas bajo control.
+            </p>
+            <p className="text-sm text-blue-200">
+              Con Money Manager podrás visualizar tus ingresos y gastos de forma
+              sencilla y efectiva.
+            </p>
           </div>
         </div>
 
-        <div className="w-1/2 p-10 bg-white">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">
+        {/* Formulario de login */}
+        <div className="w-full md:w-1/2 p-6 sm:p-10 bg-white">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mb-1 sm:mb-2">
               Iniciar sesión
             </h2>
-            <p className="text-slate-600">Accede a tu cuenta para continuar</p>
+            <p className="text-slate-600 text-sm sm:text-base">
+              Accede a tu cuenta para continuar
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5 sm:space-y-6"
+          >
+            {/* Correo */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Correo electrónico
               </label>
               <input
                 type="email"
+                autoComplete="email"
                 placeholder="tu@email.com"
-                className="w-full border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-slate-50 hover:bg-white text-gray-500"
+                className="w-full border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 hover:bg-white text-gray-700 transition-colors"
                 {...register("email", {
                   required: "El correo es obligatorio",
                   pattern: {
@@ -113,7 +123,7 @@ const LoginPage = () => {
                 })}
               />
               {errors.email && (
-                <p className="text-rose-500 text-sm mt-1 flex items-center gap-1">
+                <p className="text-rose-500 text-xs sm:text-sm mt-1 flex items-center gap-1">
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
@@ -130,24 +140,26 @@ const LoginPage = () => {
               )}
             </div>
 
+            {/* Contraseña */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-1">
                 Contraseña
               </label>
               <input
                 type="password"
+                autoComplete="current-password"
                 placeholder="••••••••"
-                className="w-full border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-slate-50 hover:bg-white text-gray-500"
+                className="w-full border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 hover:bg-white text-gray-700 transition-colors"
                 {...register("password", {
                   required: "La contraseña es obligatoria",
                   minLength: {
                     value: 8,
-                    message: "La contraseña debe tener al menos 8 caracteres",
+                    message: "Debe tener al menos 8 caracteres",
                   },
                 })}
               />
               {errors.password && (
-                <p className="text-rose-500 text-sm mt-1 flex items-center gap-1">
+                <p className="text-rose-500 text-xs sm:text-sm mt-1 flex items-center gap-1">
                   <svg
                     className="w-4 h-4"
                     fill="currentColor"
@@ -164,6 +176,7 @@ const LoginPage = () => {
               )}
             </div>
 
+            {/* Botón de login */}
             <CustomButton
               text="Iniciar sesión"
               size="lg"
@@ -171,17 +184,16 @@ const LoginPage = () => {
               type="submit"
             />
 
-            <div className="text-center">
-              <p className="text-sm text-slate-600">
-                ¿No tienes una cuenta?{" "}
-                <Link
-                  href={RoutesEnum.REGISTER}
-                  className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
-                >
-                  Regístrate aquí
-                </Link>
-              </p>
-            </div>
+            {/* Link de registro */}
+            <p className="text-center text-xs sm:text-sm text-slate-600">
+              ¿No tienes una cuenta?{" "}
+              <Link
+                href={RoutesEnum.REGISTER}
+                className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
+              >
+                Regístrate aquí
+              </Link>
+            </p>
           </form>
         </div>
       </div>
