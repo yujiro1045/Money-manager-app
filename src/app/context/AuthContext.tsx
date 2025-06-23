@@ -9,7 +9,7 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await loginUser(email, password);
   };
 
-  const register = async (email: string, password: string) => {
-    await registerUser(email, password);
+  const register = async (email: string, password: string, name: string) => {
+    await registerUser(email, password, name);
   };
 
   const logout = async () => {

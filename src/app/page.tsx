@@ -24,12 +24,10 @@ export default function Home() {
 
   if (!user) return null;
 
-  const userName = user?.email || user?.displayName || "Usuario";
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-6xl mx-auto px-4 pt-10 pb-20 space-y-10">
-        <Header userName={userName} />
+        <Header />
         <Selector />
         <MonthlySummary />
         <TransactionSections />
@@ -37,10 +35,10 @@ export default function Home() {
         <div className="text-center">
           <Link
             href={RoutesEnum.SUMMARY}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 font-medium"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 font-medium"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
