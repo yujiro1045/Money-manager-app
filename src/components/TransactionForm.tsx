@@ -26,17 +26,31 @@ const TransactionForm = () => {
       </h2>
 
       <div className="flex flex-col gap-4">
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as TransactionTypeEnum)}
-          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
-        >
-          {Object.values(TransactionTypeEnum).map((value) => (
-            <option key={value} value={value}>
-              {value === TransactionTypeEnum.INCOME ? "Ingreso" : "Gasto"}
-            </option>
-          ))}
-        </select>
+        <div className="flex gap-4 items-center justify-center">
+          <label className="flex items-center gap-2 text-black">
+            <input
+              type="radio"
+              name="transactionType"
+              value={TransactionTypeEnum.INCOME}
+              checked={type === TransactionTypeEnum.INCOME}
+              onChange={() => setType(TransactionTypeEnum.INCOME)}
+              className="accent-blue-600"
+            />
+            Ingreso
+          </label>
+
+          <label className="flex items-center gap-2 text-black">
+            <input
+              type="radio"
+              name="transactionType"
+              value={TransactionTypeEnum.EXPENSE}
+              checked={type === TransactionTypeEnum.EXPENSE}
+              onChange={() => setType(TransactionTypeEnum.EXPENSE)}
+              className="accent-red-500"
+            />
+            Gasto
+          </label>
+        </div>
 
         <input
           type="text"
