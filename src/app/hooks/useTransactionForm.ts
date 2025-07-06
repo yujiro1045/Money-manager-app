@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/libs/firebase";
@@ -9,6 +9,7 @@ import {
 } from "@/app/enum/transaction/transaction-type.enum";
 import { TransactionType } from "@/interfaces/transacions-interfaces";
 import dayjs from "dayjs";
+import { useCategoriesStore } from "./useCategoriesStore";
 
 const DEFAULT_CATEGORY = TransactionCategoryEnum.CATEGORY;
 const DEFAULT_TYPE = TransactionTypeEnum.INCOME;
@@ -22,6 +23,19 @@ export const useTransactionForm = () => {
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [type, setType] = useState<TransactionTypeEnum>(DEFAULT_TYPE);
   const [amount, setAmount] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+
+  const categories = useCategoriesStore((state) => state.categories);
+  const saveCategoryToFirebase = useCategoriesStore(
+    (state) => state.saveCategories
+  );
+  const loadCategoriesFromFirebase = useCategoriesStore(
+    (state) => state.loadCategories
+  );
+
+  useEffect(() => {
+    loadCategoriesFromFirebase();
+  }, [loadCategoriesFromFirebase]);
 
   const resetForm = () => {
     setCategory(DEFAULT_CATEGORY);
@@ -41,6 +55,33 @@ export const useTransactionForm = () => {
     }
 
     return amountNumber;
+  };
+
+  const addCustomCategory = async (name: string) => {
+    const trimmed = name.trim();
+    if (!categories.includes(trimmed)) {
+      await saveCategoryToFirebase(trimmed);
+      setCategory(trimmed as TransactionCategoryEnum);
+      Swal.fire({
+        icon: "success",
+        title: "Categoría agregada",
+        text: `La categoría "${trimmed}" ha sido guardada.`,
+      });
+    }
+  };
+
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campo vacío",
+        text: "Por favor escribe una categoría antes de crearla.",
+      });
+      return;
+    }
+
+    await addCustomCategory(newCategory);
+    setNewCategory("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,12 +145,17 @@ export const useTransactionForm = () => {
   };
 
   return {
-    category,
-    setCategory,
-    type,
-    setType,
+    addCustomCategory,
     amount,
-    setAmount,
+    categories,
+    category,
+    handleAddCategory,
     handleSubmit,
+    newCategory,
+    setAmount,
+    setCategory,
+    setNewCategory,
+    setType,
+    type,
   };
 };
