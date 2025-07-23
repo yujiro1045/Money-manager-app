@@ -1,10 +1,7 @@
 import React from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/es";
 
 import { useFinanceStore } from "@/store/FinanceState";
-
-dayjs.locale("es");
+import dayjs from "dayjs";
 
 const Selector = () => {
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
