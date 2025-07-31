@@ -2,7 +2,7 @@ import { auth, db } from "@/libs/firebase";
 import {
   addDoc,
   collection,
-  getDocs,
+  onSnapshot,
   query,
   Timestamp,
 } from "firebase/firestore";
@@ -11,8 +11,8 @@ import { create } from "zustand";
 interface CategoriesState {
   categories: string[];
   addCategory: (name: string) => void;
-  saveCategories: (name: string) => void;
-  loadCategories: () => Promise<void>;
+  saveCategories: (name: string) => Promise<void>;
+  loadCategories: () => void;
 }
 
 export const useCategoriesStore = create<CategoriesState>((set, get) => ({
@@ -42,14 +42,16 @@ export const useCategoriesStore = create<CategoriesState>((set, get) => ({
     if (!user) return;
 
     const ref = collection(db, "users", user.uid, "categories");
-    const snapshot = await getDocs(query(ref));
 
-    const loaded: string[] = [];
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      if (data.name) loaded.push(data.name);
+    onSnapshot(query(ref), (snapshot) => {
+      const loaded: string[] = [];
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.name) loaded.push(data.name);
+      });
+
+      set({ categories: [...new Set(loaded)] });
     });
-
-    set({ categories: [...new Set(loaded)] });
   },
 }));

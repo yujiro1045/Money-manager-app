@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Swal from "sweetalert2";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "@/libs/firebase";
@@ -29,13 +29,6 @@ export const useTransactionForm = () => {
   const saveCategoryToFirebase = useCategoriesStore(
     (state) => state.saveCategories
   );
-  const loadCategoriesFromFirebase = useCategoriesStore(
-    (state) => state.loadCategories
-  );
-
-  useEffect(() => {
-    loadCategoriesFromFirebase();
-  }, [loadCategoriesFromFirebase]);
 
   const resetForm = () => {
     setCategory(DEFAULT_CATEGORY);
