@@ -1,6 +1,7 @@
+import React from "react";
+
 import { useFinanceStore } from "@/store/FinanceState";
 import dayjs from "dayjs";
-import React from "react";
 
 const Selector = () => {
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
@@ -10,7 +11,7 @@ const Selector = () => {
       <select
         value={selectedMonth}
         onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        className="border border-gray-300 rounded-md px-3 py-2 text-black"
+        className="border border-gray-300 rounded-md px-3 py-2  text-black appearance-none bg-[url('/path-to-arrow.svg')] bg-no-repeat bg-[right_0.75rem_center]"
       >
         {Array.from({ length: 12 }, (_, i) => (
           <option key={i} value={i}>
@@ -22,7 +23,7 @@ const Selector = () => {
       <select
         value={selectedYear}
         onChange={(e) => setSelectedYear(Number(e.target.value))}
-        className="border border-gray-300 rounded-md px-3 py-2 text-black"
+        className="border border-gray-300 rounded-md px-3 py-2 text-black appearance-none bg-[url('/path-to-arrow.svg')] bg-no-repeat bg-[right_0.75rem_center]"
       >
         {[2023, 2024, 2025].map((year) => (
           <option key={year} value={year}>
