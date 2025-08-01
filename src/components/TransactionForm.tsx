@@ -4,17 +4,25 @@ import {
 } from "@/app/enum/transaction/transaction-type.enum";
 import { useTransactionForm } from "@/app/hooks/useTransactionForm";
 import React from "react";
+import Swal from "sweetalert2";
 
 const TransactionForm = () => {
   const {
     amount,
     category,
+    categories,
+    handleAddCategory,
     handleSubmit,
+    newCategory,
     setAmount,
     setCategory,
+    setNewCategory,
     setType,
     type,
   } = useTransactionForm();
+
+  const baseCategories = Object.values(TransactionCategoryEnum);
+  const allCategories = [...baseCategories, ...categories];
 
   return (
     <form
@@ -52,15 +60,46 @@ const TransactionForm = () => {
           </label>
         </div>
 
-        <input
-          type="text"
+        <select
           value={category}
-          placeholder="Categoría"
-          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 placeholder:text-slate-400 shadow-sm"
           onChange={(e) =>
             setCategory(e.target.value as TransactionCategoryEnum)
           }
-        />
+          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
+        >
+          {allCategories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={newCategory}
+            placeholder="Nueva categoría"
+            onChange={(e) => setNewCategory(e.target.value)}
+            className="flex-1 bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              if (!newCategory.trim()) {
+                Swal.fire({
+                  icon: "warning",
+                  title: "Categoría vacía",
+                  text: "Por favor escribe un nombre para la categoría.",
+                });
+                return;
+              }
+              handleAddCategory();
+            }}
+            className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 w-full sm:w-auto text-center"
+          >
+            Crear
+          </button>
+        </div>
 
         <input
           type="number"
