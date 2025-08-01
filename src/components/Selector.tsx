@@ -1,7 +1,8 @@
 import React from "react";
 
+import dayjs from "@/libs/dayjs";
+
 import { useFinanceStore } from "@/store/FinanceState";
-import dayjs from "dayjs";
 
 const Selector = () => {
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
