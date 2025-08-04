@@ -2,30 +2,45 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useCategoriesStore } from "../hooks/useCategoriesStore";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/libs/firebase";
+import { auth, db } from "@/libs/firebase";
+import { useAuth } from "./AuthContext";
+import { collection, onSnapshot, query } from "firebase/firestore";
 
 interface Props {
   children: ReactNode;
 }
 
 const AppInitializerContext = ({ children }: Props) => {
-  const loadCategoriesFromFirebase = useCategoriesStore(
-    (state) => state.loadCategories
+  const loadCategories = useCategoriesStore(
+    (state) => state.loadCategories as (categories: string[]) => void
   );
-  const [hasInitialized, setHasInitialized] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && !hasInitialized) {
-        loadCategoriesFromFirebase();
-        setHasInitialized(true);
-      }
-    });
+  const { user } = useAuth();
 
-    return () => unsubscribe();
-  }, [loadCategoriesFromFirebase, hasInitialized]);
+  useEffect(
+    function suscribeToCategories() {
+      if (!user) return;
 
-  return <>{children}</>;
+      const ref = collection(db, "users", user.uid, "categories");
+      const unsuscribe = onSnapshot(query(ref), (snapshot) => {
+        const loaded: string[] = [];
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.name) loaded.push(data.name);
+        });
+
+        loadCategories([...new Set(loaded)]);
+      });
+
+      return () => {
+        unsuscribe();
+      };
+    },
+    [loadCategories, user]
+  );
+
+  return children;
 };
 
 export default AppInitializerContext;

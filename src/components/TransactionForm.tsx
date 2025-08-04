@@ -22,7 +22,7 @@ const TransactionForm = () => {
   } = useTransactionForm();
 
   const baseCategories = Object.values(TransactionCategoryEnum);
-  const allCategories = [...baseCategories, ...categories];
+  const allCategories = Array.from(new Set([...baseCategories, ...categories]));
 
   return (
     <form

@@ -10,48 +10,39 @@ import { create } from "zustand";
 
 interface CategoriesState {
   categories: string[];
-  addCategory: (name: string) => void;
-  saveCategories: (name: string) => Promise<void>;
-  loadCategories: () => void;
 }
 
-export const useCategoriesStore = create<CategoriesState>((set, get) => ({
-  categories: [],
-  addCategory: (name) =>
-    set((state) => ({
-      categories: [...state.categories, name],
-    })),
+interface CategoriesActions {
+  addCategory: (name: string) => void;
+  saveCategories: (name: string) => Promise<void>;
+  loadCategories: (categories: string[]) => void;
+}
 
-  saveCategories: async (name: string) => {
-    const user = auth.currentUser;
-    if (!user) return;
+export const useCategoriesStore = create<CategoriesState & CategoriesActions>(
+  (set, get) => ({
+    categories: [],
+    addCategory: (name) =>
+      set((state) => ({
+        categories: [...state.categories, name],
+      })),
 
-    const trimmed = name.trim();
-    if (!trimmed) return;
+    saveCategories: async (name: string) => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-    await addDoc(collection(db, "users", user.uid, "categories"), {
-      name: trimmed,
-      createdAt: Timestamp.now(),
-    });
+      const trimmed = name.trim();
+      if (!trimmed) return;
 
-    get().addCategory(trimmed);
-  },
-
-  loadCategories: async () => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const ref = collection(db, "users", user.uid, "categories");
-
-    onSnapshot(query(ref), (snapshot) => {
-      const loaded: string[] = [];
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.name) loaded.push(data.name);
+      await addDoc(collection(db, "users", user.uid, "categories"), {
+        name: trimmed,
+        createdAt: Timestamp.now(),
       });
 
-      set({ categories: [...new Set(loaded)] });
-    });
-  },
-}));
+      get().addCategory(trimmed);
+    },
+
+    loadCategories: (categories: string[]) => {
+      set({ categories });
+    },
+  })
+);

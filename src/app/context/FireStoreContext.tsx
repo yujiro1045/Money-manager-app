@@ -14,31 +14,34 @@ const FirestoreProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const loadTransactions = useFinanceStore((state) => state.loadTransactions);
 
-  useEffect(() => {
-    if (!user?.uid) return;
+  useEffect(
+    function subscribeToUserTransactions() {
+      if (!user?.uid) return;
 
-    const subscribeToTransactionsData = () => {
-      const transactionsQuery = query(
-        collection(db, FirebaseCollectionEnum.TRANSACTIONS),
-        where("userId", "==", user?.uid)
-      );
-
-      const unsub = onSnapshot(transactionsQuery, (querySnapshot) => {
-        const data: TransactionType[] = querySnapshot.docs.map(
-          (doc) => doc.data() as TransactionType
+      const subscribeToTransactionsData = () => {
+        const transactionsQuery = query(
+          collection(db, FirebaseCollectionEnum.TRANSACTIONS),
+          where("userId", "==", user?.uid)
         );
 
-        loadTransactions(data);
-      });
-      return () => unsub();
-    };
+        const unsub = onSnapshot(transactionsQuery, (querySnapshot) => {
+          const data: TransactionType[] = querySnapshot.docs.map(
+            (doc) => doc.data() as TransactionType
+          );
 
-    const unsubscribe = subscribeToTransactionsData();
+          loadTransactions(data);
+        });
+        return () => unsub();
+      };
 
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [loadTransactions, user?.uid]);
+      const unsubscribe = subscribeToTransactionsData();
+
+      return () => {
+        if (unsubscribe) unsubscribe();
+      };
+    },
+    [loadTransactions, user?.uid]
+  );
 
   return (
     <FirestoreContext.Provider value={{}}>{children}</FirestoreContext.Provider>
