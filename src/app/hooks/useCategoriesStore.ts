@@ -1,11 +1,5 @@
 import { auth, db } from "@/libs/firebase";
-import {
-  addDoc,
-  collection,
-  onSnapshot,
-  query,
-  Timestamp,
-} from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { create } from "zustand";
 
 interface CategoriesState {

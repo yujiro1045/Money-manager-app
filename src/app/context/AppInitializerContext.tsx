@@ -1,8 +1,7 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useCategoriesStore } from "../hooks/useCategoriesStore";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "@/libs/firebase";
+import { db } from "@/libs/firebase";
 import { useAuth } from "./AuthContext";
 import { collection, onSnapshot, query } from "firebase/firestore";
 
