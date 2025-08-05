@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "./context/AuthContext";
 import FirestoreProvider from "./context/FireStoreContext";
 import "./globals.css";
+import AppInitializerContext from "./context/AppInitializerContext";
 
 export const metadata: Metadata = {
   title: "Money Manager",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="es">
       <AuthProvider>
         <FirestoreProvider>
-          <body>{children}</body>
+          <AppInitializerContext>
+            <body>{children}</body>
+          </AppInitializerContext>
         </FirestoreProvider>
       </AuthProvider>
     </html>

@@ -14,11 +14,14 @@ export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push(RoutesEnum.LOGIN);
-    }
-  }, [loading, user, router]);
+  useEffect(
+    function redirectIfNotAuthenticated() {
+      if (!loading && !user) {
+        router.push(RoutesEnum.LOGIN);
+      }
+    },
+    [loading, user, router]
+  );
 
   if (loading) return <p className="p-6">Cargando...</p>;
 

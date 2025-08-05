@@ -65,41 +65,44 @@ export const useTransactions = () => {
     }
   };
 
-  useEffect(() => {
-    if (authLoading) return;
+  useEffect(
+    function subscribeToUserTransactionsWithFallback() {
+      if (authLoading) return;
 
-    if (!user) {
-      loadTransactions([]);
-      return;
-    }
-
-    const q = query(
-      collection(db, FirebaseCollectionEnum.TRANSACTIONS),
-      where("uid", "==", user.uid)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const data = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as TransactionType[];
-
-        loadTransactions(data);
-      },
-      (error) => {
-        console.error("Error obteniendo transacciones:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudieron cargar las transacciones.",
-        });
+      if (!user) {
+        loadTransactions([]);
+        return;
       }
-    );
 
-    return () => unsubscribe();
-  }, [user, authLoading, loadTransactions]);
+      const q = query(
+        collection(db, FirebaseCollectionEnum.TRANSACTIONS),
+        where("uid", "==", user.uid)
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const data = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as TransactionType[];
+
+          loadTransactions(data);
+        },
+        (error) => {
+          console.error("Error obteniendo transacciones:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No se pudieron cargar las transacciones.",
+          });
+        }
+      );
+
+      return () => unsubscribe();
+    },
+    [user, authLoading, loadTransactions]
+  );
 
   return {
     loading,
