@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useFinanceStore } from "@/store/FinanceState";
+import { FinancialCharts } from "@/components/FinancialCharts";
 
 const SummaryPage = () => {
   const balance = useFinanceStore((state) => state.balance);
@@ -176,6 +177,10 @@ const SummaryPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        <div>
+          <FinancialCharts />
         </div>
 
         {/* Análisis y Recomendación */}
