@@ -4,22 +4,52 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFinanceStore } from "@/store/FinanceState";
 import { FinancialCharts } from "@/components/FinancialCharts";
+import Selector from "@/components/Selector";
 
 const SummaryPage = () => {
-  const balance = useFinanceStore((state) => state.balance);
+  /* const balance = useFinanceStore((state) => state.balance);
   const expenseTotal = useFinanceStore((state) => state.expenseTotal);
   const incomeTotal = useFinanceStore((state) => state.incomeTotal);
-  const loading = useFinanceStore((state) => state.loading);
+  const loading = useFinanceStore((state) => state.loading); */
+
+  const {
+    selectedMonth,
+    selectedYear,
+    getMonthlyTransactions,
+    loading,
+    setSelectedMonth,
+    setSelectedYear,
+  } = useFinanceStore();
+
+  const monthlyTransactions = getMonthlyTransactions(
+    selectedMonth,
+    selectedYear
+  );
+
+  const incomeTotal = monthlyTransactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const expenseTotal = monthlyTransactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance = incomeTotal - expenseTotal;
 
   if (loading) return <p className="text-gray-600">Cargando resumen...</p>;
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-4xl mx-auto p-6 space-y-8">
-        <div className="text-center space-y-2">
+      <div className="max-w-4xl mx-auto p-6 space-y-8 ">
+        <div className="text-center space-y-2 ">
           <h1 className="text-4xl font-bold text-slate-800">
             Resumen Financiero
           </h1>
           <p className="text-slate-600">Análisis completo de tus finanzas</p>
+        </div>
+
+        {/* Selector global */}
+        <div className="flex justify-center  mb-6 ">
+          <Selector />
         </div>
 
         {/* Tarjetas principales */}

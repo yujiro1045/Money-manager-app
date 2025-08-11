@@ -2,7 +2,6 @@
 
 import { useFinanceStore } from "@/store/FinanceState";
 import React, { useState } from "react";
-import dayjs from "@/libs/dayjs";
 import {
   Bar,
   BarChart,
@@ -16,12 +15,18 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import dayjs from "@/libs/dayjs";
 import Selector from "./Selector";
+import { CustomButton } from "./ui/CustomButton";
+import CustomLegend from "./ui/CustomLegend";
 
 const COLORS = ["#10B981", "#EF4444"];
 
 export const FinancialCharts = () => {
-  const [activeTab, setActiveTab] = useState<"barras" | "circular">();
+  const [activeTab, setActiveTab] = useState<"barras" | "circular">("barras");
+  const [activeData, setActiveData] = useState<"all" | "ingresos" | "gastos">(
+    "all"
+  );
 
   const { selectedMonth, selectedYear, getMonthlyTransactions } =
     useFinanceStore();
@@ -64,6 +69,8 @@ export const FinancialCharts = () => {
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
 
+  const balance = incomeTotal - expenseTotal;
+
   const pieData = [
     { name: "Ingresos", value: incomeTotal },
     { name: "Gastos", value: expenseTotal },
@@ -76,31 +83,19 @@ export const FinancialCharts = () => {
         {selectedYear}
       </h3>
 
-      <div className="mb-4">
-        <Selector />
-      </div>
-
       <div className="flex gap-2 mb-4">
-        <button
-          onClick={() => setActiveTab("barras")}
-          className={`px-4 py-2 rounded-md ${
-            activeTab === "barras"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-400 text-white"
-          }`}
-        >
-          Gráfico de Barras
-        </button>
-        <button
-          onClick={() => setActiveTab("circular")}
-          className={`px-4 py-2 rounded-md ${
-            activeTab === "circular"
-              ? "bg-blue-500 text-white"
-              : "bg-gray-400 text-white"
-          }`}
-        >
-          Gráfico Circular
-        </button>
+        <CustomButton
+          text="Gráfico de Barras"
+          size="small"
+          color={activeTab === "barras" ? "blue" : "gray"}
+          onclick={() => setActiveTab("barras")}
+        />
+        <CustomButton
+          text="Gráfico Circular"
+          size="small"
+          color={activeTab === "circular" ? "blue" : "gray"}
+          onclick={() => setActiveTab("circular")}
+        />
       </div>
 
       <div style={{ height: 300 }}>
@@ -113,11 +108,36 @@ export const FinancialCharts = () => {
             <BarChart data={dataByDay}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Ingresos" fill="#10B981" />
-              <Bar dataKey="Gastos" fill="#EF4444" />
+              <YAxis
+                width={80}
+                domain={[
+                  0,
+                  (dataMax: number) => Math.ceil(dataMax / 100000) * 100000,
+                ]}
+                tickFormatter={(value: number) =>
+                  Number(value).toLocaleString("es-ES", {
+                    minimumFractionDigits: 0,
+                  })
+                }
+              />
+              <Tooltip
+                formatter={(value: number) => value.toLocaleString("es-ES")}
+              />
+              <Legend
+                content={
+                  <CustomLegend
+                    activeData={activeData}
+                    onChange={setActiveData}
+                  />
+                }
+              />
+
+              {(activeData === "all" || activeData === "ingresos") && (
+                <Bar dataKey="Ingresos" fill="#10B981" />
+              )}
+              {(activeData === "all" || activeData === "gastos") && (
+                <Bar dataKey="Gastos" fill="#EF4444" />
+              )}
             </BarChart>
           </ResponsiveContainer>
         ) : (
@@ -130,7 +150,9 @@ export const FinancialCharts = () => {
                 cx="50%"
                 cy="50%"
                 outerRadius={100}
-                label
+                label={({ name, value }) =>
+                  `${name}: ${(value as number).toLocaleString("es-ES")}`
+                }
               >
                 {pieData.map((entry, index) => (
                   <Cell
@@ -139,7 +161,9 @@ export const FinancialCharts = () => {
                   />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip
+                formatter={(value: number) => value.toLocaleString("es-ES")}
+              />
               <Legend />
             </PieChart>
           </ResponsiveContainer>

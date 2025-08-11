@@ -5,6 +5,7 @@ import {
 import { useTransactionForm } from "@/app/hooks/useTransactionForm";
 import React from "react";
 import Swal from "sweetalert2";
+import CustomSelect from "./ui/CustomSelect";
 
 const TransactionForm = () => {
   const {
@@ -60,19 +61,19 @@ const TransactionForm = () => {
           </label>
         </div>
 
-        <select
+        <CustomSelect
           value={category}
           onChange={(e) =>
             setCategory(e.target.value as TransactionCategoryEnum)
           }
-          className="bg-white text-slate-700 border border-slate-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm"
+          size="large"
         >
           {allCategories.map((cat) => (
             <option key={cat} value={cat}>
               {cat}
             </option>
           ))}
-        </select>
+        </CustomSelect>
 
         <div className="flex flex-col sm:flex-row gap-2">
           <input
