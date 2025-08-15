@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useFinanceStore } from "@/store/FinanceState";
@@ -7,19 +7,8 @@ import { FinancialCharts } from "@/components/FinancialCharts";
 import Selector from "@/components/Selector";
 
 const SummaryPage = () => {
-  /* const balance = useFinanceStore((state) => state.balance);
-  const expenseTotal = useFinanceStore((state) => state.expenseTotal);
-  const incomeTotal = useFinanceStore((state) => state.incomeTotal);
-  const loading = useFinanceStore((state) => state.loading); */
-
-  const {
-    selectedMonth,
-    selectedYear,
-    getMonthlyTransactions,
-    loading,
-    setSelectedMonth,
-    setSelectedYear,
-  } = useFinanceStore();
+  const { selectedMonth, selectedYear, getMonthlyTransactions, loading } =
+    useFinanceStore();
 
   const monthlyTransactions = getMonthlyTransactions(
     selectedMonth,

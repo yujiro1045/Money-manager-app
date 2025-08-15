@@ -16,7 +16,6 @@ import {
   YAxis,
 } from "recharts";
 import dayjs from "@/libs/dayjs";
-import Selector from "./Selector";
 import { CustomButton } from "./ui/CustomButton";
 import CustomLegend from "./ui/CustomLegend";
 
@@ -36,7 +35,12 @@ export const FinancialCharts = () => {
     selectedYear
   );
 
-  const dataByDay = Array.from({ length: 31 }, (_, day) => {
+  const daysInMonth = dayjs()
+    .year(selectedYear)
+    .month(selectedMonth)
+    .daysInMonth();
+
+  const dataByDay = Array.from({ length: daysInMonth }, (_, day) => {
     const currentDate = dayjs()
       .year(selectedYear)
       .month(selectedMonth)
@@ -56,10 +60,10 @@ export const FinancialCharts = () => {
 
     return {
       day: `${day + 1}`,
-      Ingresos: income,
-      Gastos: expense,
+      ingresos: income,
+      gastos: expense,
     };
-  }).filter((d) => d.Ingresos > 0 || d.Gastos > 0);
+  }).filter((d) => d.ingresos > 0 || d.gastos > 0);
 
   const incomeTotal = monthlyTransactions
     .filter((t) => t.type === "income")
@@ -72,8 +76,8 @@ export const FinancialCharts = () => {
   const balance = incomeTotal - expenseTotal;
 
   const pieData = [
-    { name: "Ingresos", value: incomeTotal },
-    { name: "Gastos", value: expenseTotal },
+    { name: "ingresos", value: incomeTotal },
+    { name: "gastos", value: expenseTotal },
   ];
 
   return (
@@ -133,10 +137,10 @@ export const FinancialCharts = () => {
               />
 
               {(activeData === "all" || activeData === "ingresos") && (
-                <Bar dataKey="Ingresos" fill="#10B981" />
+                <Bar dataKey="ingresos" fill="#10B981" />
               )}
               {(activeData === "all" || activeData === "gastos") && (
-                <Bar dataKey="Gastos" fill="#EF4444" />
+                <Bar dataKey="gastos" fill="#EF4444" />
               )}
             </BarChart>
           </ResponsiveContainer>

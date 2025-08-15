@@ -177,7 +177,7 @@ const RegisterPage = () => {
 
             <CustomButton
               text="Crear cuenta"
-              size="lg"
+              size="large"
               color="green"
               type="submit"
             />

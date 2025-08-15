@@ -179,7 +179,7 @@ const LoginPage = () => {
             {/* Botón de login */}
             <CustomButton
               text="Iniciar sesión"
-              size="lg"
+              size="large"
               color="blue"
               type="submit"
             />
