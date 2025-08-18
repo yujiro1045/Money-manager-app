@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
+import { LegendPayload } from "recharts";
 
 interface CustomLegendProps {
-  payload?: any[];
+  payload?: LegendPayload[];
   activeData: "all" | "ingresos" | "gastos";
   onChange: (value: "all" | "ingresos" | "gastos") => void;
 }
@@ -14,9 +15,9 @@ const CustomLegend: React.FC<CustomLegendProps> = ({
 }) => {
   const items = [
     { value: "Todos", type: "all", color: "#6B7280" },
-    ...payload.map((item: any) => ({
-      value: item.value,
-      type: item.value.toLowerCase(),
+    ...payload.map((item) => ({
+      value: item.value as string,
+      type: (item.value as string).toLowerCase(),
       color: item.color,
     })),
   ];

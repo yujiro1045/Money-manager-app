@@ -73,8 +73,6 @@ export const FinancialCharts = () => {
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const balance = incomeTotal - expenseTotal;
-
   const pieData = [
     { name: "ingresos", value: incomeTotal },
     { name: "gastos", value: expenseTotal },
