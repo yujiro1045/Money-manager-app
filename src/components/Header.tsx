@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import React from "react";
-import { CustomButton } from "./CustomButton";
+import { CustomButton } from "./ui/CustomButton";
 import { RoutesEnum } from "@/app/enum/routes.enum";
 import { logoutUser } from "@/libs/auth";
 import { useAuth } from "@/app/hooks/useAuth";
@@ -29,7 +29,7 @@ const Header = () => {
           </p>
           <CustomButton
             text="Cerrar sesión"
-            size="sm"
+            size="small"
             color="red"
             onclick={handleLogout}
           />

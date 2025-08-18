@@ -1,37 +1,37 @@
 import React from "react";
-
 import dayjs from "@/libs/dayjs";
-
 import { useFinanceStore } from "@/store/FinanceState";
+import CustomSelect from "./ui/CustomSelect";
 
 const Selector = () => {
   const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
     useFinanceStore();
+
   return (
     <div className="flex gap-4 items-center">
-      <select
+      <CustomSelect
         value={selectedMonth}
         onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        className="border border-gray-300 rounded-md px-3 py-2  text-black appearance-none bg-[url('/path-to-arrow.svg')] bg-no-repeat bg-[right_0.75rem_center]"
+        size="medium"
       >
         {Array.from({ length: 12 }, (_, i) => (
           <option key={i} value={i}>
             {dayjs().month(i).locale("es").format("MMMM")}
           </option>
         ))}
-      </select>
+      </CustomSelect>
 
-      <select
+      <CustomSelect
         value={selectedYear}
         onChange={(e) => setSelectedYear(Number(e.target.value))}
-        className="border border-gray-300 rounded-md px-3 py-2 text-black appearance-none bg-[url('/path-to-arrow.svg')] bg-no-repeat bg-[right_0.75rem_center]"
+        size="medium"
       >
         {[2023, 2024, 2025].map((year) => (
           <option key={year} value={year}>
             {year}
           </option>
         ))}
-      </select>
+      </CustomSelect>
     </div>
   );
 };

@@ -8,7 +8,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import { RoutesEnum } from "../enum/routes.enum";
 import { useForm } from "react-hook-form";
-import { CustomButton } from "@/components/CustomButton";
+import { CustomButton } from "@/components/ui/CustomButton";
 
 const USER_NOT_FOUND = "auth/user-not-found";
 const WRONG_PASSWORD = "auth/wrong-password";
@@ -179,7 +179,7 @@ const LoginPage = () => {
             {/* Botón de login */}
             <CustomButton
               text="Iniciar sesión"
-              size="lg"
+              size="large"
               color="blue"
               type="submit"
             />

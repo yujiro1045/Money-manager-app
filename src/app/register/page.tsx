@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { RoutesEnum } from "../enum/routes.enum";
 import { FirebaseError } from "firebase/app";
 import { useForm } from "react-hook-form";
-import { CustomButton } from "@/components/CustomButton";
+import { CustomButton } from "@/components/ui/CustomButton";
 
 const EMAIL_CONFLICT_CODE = "auth/email-already-in-use";
 
@@ -177,7 +177,7 @@ const RegisterPage = () => {
 
             <CustomButton
               text="Crear cuenta"
-              size="lg"
+              size="large"
               color="green"
               type="submit"
             />
